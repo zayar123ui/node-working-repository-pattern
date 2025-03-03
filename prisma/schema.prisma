@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator repo {
+  provider = "prisma-repo"
+  output   = "../src/repository"
+  error    = "true"
+  info     = "true"
+  query    = "true"
+  warn     = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  detailId Int?
+
+  detail UserDetail? @relation(fields: [detailId], references: [id])
+
+  @@map("m_users")
+}
+
+model UserDetail {
+  id     Int @id @default(autoincrement())
+
+  phone   String?
+  address String?
+  User    User[]
+
+  @@map("m_user_details")
+}
